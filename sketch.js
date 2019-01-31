@@ -9,7 +9,7 @@
 // option 0 = corn maze
 // option 1 = castle
 // (Both look cool)
-var drawingOption = 0;
+var drawingOption = 1;
 
 
 //Set to true to allow diagonal moves

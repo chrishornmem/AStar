@@ -7,9 +7,10 @@
 function MapFactory()
 {
     this.maps = [];
-    this.maps.push(SearchMap); // Simple random map
-    this.maps.push(BspMap); // BSP rogue-like map
-    this.maps.push(MazeMap);
+    this.maps.push(TubeMap); // Tube map
+    //this.maps.push(SearchMap); // Simple random map
+    // this.maps.push(BspMap); // BSP rogue-like map
+    // this.maps.push(MazeMap);
 
     this.getMap = function(cols, rows, x, y, w, h, allowDiagonals, percentWalls)
     {
