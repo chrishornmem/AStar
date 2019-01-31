@@ -20,10 +20,16 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     //console.log(line2End);
 
     var points = [
-        { from: [0, 0], to: [0, line1End] },
-        { from: [0,line1End], to: [line2End, line1End] },
-        { from: [line2End, line1End], to: [line2End, rows-1] },
-        { from: [line2End, rows-1], to: [cols-1, rows-1] }
+        { from: [0, 1], to: [3, 1] },
+        { from: [3, 1], to: [3, line1End] },
+        { from: [3,line1End], to: [line2End, line1End] },
+        { from: [line2End, line1End], to: [line2End, rows-3] },
+        { from: [line2End, rows-3], to: [cols-1, rows-3] },
+        { from: [cols-1, rows-3], to: [cols-1, rows-1] },
+        { from: [10, 5], to: [10, 25] },
+        { from: [5, 10], to: [25, 10] },
+        { from: [35, 10], to: [35, rows-3] },
+        { from: [25, 15], to: [cols-4, 15] }
     ];
 
     console.log("points:");
