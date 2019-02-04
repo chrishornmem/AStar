@@ -38,6 +38,9 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     // Did the maze algorithm already visit me?
     this.visited = false;
 
+    var canPassThroughCorners = true;
+    var drawingOption = 1;
+
     // Display me
     this.show = function(color) {
         if (this.wall) {

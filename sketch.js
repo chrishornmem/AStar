@@ -20,8 +20,8 @@ var allowDiagonals = true;
 // walls located diagonally next to each other
 var canPassThroughCorners = false;
 
-var cols = 50;
-var rows = 50;
+var cols = 100;
+var rows = 100;
 
 
 // % of cells that are walls
@@ -174,7 +174,7 @@ var runPauseButton;
 
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
-    gamemap = new MapFactory().getMap(cols, rows, 10, 10, 410, 410, allowDiagonals, percentWalls);
+    gamemap = new MapFactory().getMap(cols, rows, 10, 10, 1000, 500, allowDiagonals, percentWalls);
     
     //start = gamemap.grid[0][0];
     //end = gamemap.grid[cols - 1][rows - 1];
@@ -205,21 +205,21 @@ function setup() {
 
     startTime();
 
-    if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
-        createCanvas(600, 600);
-    } else {
-        var sz = min(windowWidth, windowHeight);
-        createCanvas(sz, sz);
-    }
+//    if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
+        createCanvas(1200, 600);
+ //   } else {
+//        var sz = min(windowWidth, windowHeight);
+ //       createCanvas(sz, sz);
+  //      }
     console.log('A*');
     initaliseSearchExample(cols, rows);
 
     drawMap();
 
-    for (var i = 0; i < pathfinder.closedSet.length; i++) {
+   // for (var i = 0; i < pathfinder.closedSet.length; i++) {
    //     pathfinder.closedSet[i].show(color(255, 0, 0, 50));
         //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
-    }
+   // }
 
     var infoNode = null;
 
@@ -253,7 +253,7 @@ function setup() {
     //console.log("path:");
     //console.log(path);
 
-    drawPath(path);
+    //drawPath(path);
 
 }
 
