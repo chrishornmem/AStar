@@ -20,25 +20,27 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     //console.log(line2End);
 
     var stations = [
-        { name: "", x: 0, y: 0 },
-        { name: "Paddington", x: 5, y: 10 },
-        { name: "Liverpool St", x: 25, y: 10 },
-        { name: "Temple", x: 10, y: 5 },
-        { name: "Embankment", x: 10, y: 25 },
-
+        { name: "Paddington", x: 5, y: 10 },   // 0
+        { name: "Liverpool St", x: 25, y: 10 },  // 1
+        { name: "Temple", x: 10, y: 5 },  // 2
+        { name: "Embankment", x: 10, y: 25 }, // 3
+        { name: "Westminster", x: 3, y: 25 }, // 4
+        { name: "Charing Cross", x: 25, y: 25 }, // 5
+        { name: "St James Park", x: 25, y: 47 }, // 6
+        { name: "Holborn", x: 35, y: 10 }, // 7
+        { name: "Waterloo", x: 35, y: 47 }, // 8
+        { name: "Bank", x: 25, y: 15 }, // 9
+        { name: "Green Park", x: 46, y: 15 } // 10
     ]
 
     var points = [
-        //   { from: [0, 1], to: [3, 1] },
-        //   { from: [3, 1], to: [3, line1End] },
-        { from: [5, 10], to: [25, 10] },
-        { from: [10, 5], to: [10, 25] },
-        { from: [3, 25], to: [25, 25] },
-        { from: [25, 25], to: [25, 47] },
-        { from: [25, 47], to: [35, 47] },
-        //  { from: [cols-1, rows-3], to: [cols-1, rows-1] },
-        { from: [35, 10], to: [35, 47] },
-        { from: [25, 15], to: [46, 15] }
+        { from: 0, to: 1 },
+        { from: 2, to: 3 },
+        { from: 4, to: 5 },
+        { from: 5, to: 6 },
+        { from: 6, to: 8 },
+        { from: 7, to: 8 },
+        { from: 9, to: 10 }
     ];
 
     //console.log("points:");
@@ -51,14 +53,17 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     }
 
     for (var i = 0; i < points.length; i++) {
-        if (points[i].from[1] == points[i].to[1]) {
-            for (var j = points[i].from[0]; j <= points[i].to[0]; j++) {
-                var r = points[i].from[1]
+        var fromStation = points[i].from;
+        var toStation = points[i].to;
+
+        if (stations[fromStation].y == stations[toStation].y) {
+            for (var j = stations[fromStation].x; j <= stations[toStation].x; j++) {
+                var r = stations[fromStation].y
                 this.map[j][r] = true;
             }
-        } else if (points[i].from[0] == points[i].to[0]) {
-            for (var j = points[i].from[1]; j <= points[i].to[1]; j++) {
-                var c = points[i].from[0]
+        } else if (stations[fromStation].x == stations[toStation].x) {
+            for (var j = stations[fromStation].y; j <= stations[toStation].y; j++) {
+                var c = stations[fromStation].x
                 this.map[c][j] = true;
             }
         }
