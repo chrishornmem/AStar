@@ -1,3 +1,7 @@
+const wallColor_r = 0;
+const wallColor_g = 0;
+const wallColor_b = 255;
+
 // Daniel Shiffman
 // http://codingtra.in
 // http://patreon.com/codingtrain
@@ -37,7 +41,7 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     // Display me
     this.show = function(color) {
         if (this.wall) {
-            fill(0);
+            fill(wallColor_r,wallColor_g,wallColor_b);
             noStroke();
 
             if (drawingOption === 0) {
@@ -46,7 +50,7 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
                 rect(this.x, this.y, this.width, this.height);
             }
 
-            stroke(0);
+            stroke(wallColor_r,wallColor_g,wallColor_b);
             strokeWeight(this.width / 2);
 
             var nWalls = this.getNeighboringWalls(this.grid);

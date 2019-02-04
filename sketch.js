@@ -175,15 +175,34 @@ var runPauseButton;
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
     gamemap = new MapFactory().getMap(cols, rows, 10, 10, 410, 410, allowDiagonals, percentWalls);
-    start = gamemap.grid[0][0];
-    end = gamemap.grid[cols - 1][rows - 1];
+    
+    //start = gamemap.grid[0][0];
+    //end = gamemap.grid[cols - 1][rows - 1];
+    start = gamemap.start;
+    end = gamemap.end;
     start.wall = false;
     end.wall = false;
 
     pathfinder = new AStarPathFinder(gamemap, start, end, allowDiagonals);
+
+    pathfinder.findPath(start,end).then(function() {
+        var path = calcPath(pathfinder.lastCheckedNode);
+        drawPath(path);
+    }).catch(function(error) {
+        console.log(error);
+    });
 }
 
 function setup() {
+
+    noLoop();
+
+    background(255);
+
+    doGUI();
+
+    text("Search status - " + status, 10, 450);
+
     startTime();
 
     if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
@@ -193,8 +212,34 @@ function setup() {
         createCanvas(sz, sz);
     }
     console.log('A*');
-
     initaliseSearchExample(cols, rows);
+
+    drawMap();
+
+    for (var i = 0; i < pathfinder.closedSet.length; i++) {
+   //     pathfinder.closedSet[i].show(color(255, 0, 0, 50));
+        //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
+    }
+
+    var infoNode = null;
+
+    // for (var i = 0; i < pathfinder.openSet.length; i++) {
+    //     var node = pathfinder.openSet[i];
+    //   //  node.show(color(0, 255, 0, 50));
+    //     if (mouseX > node.x && mouseX < node.x + node.width &&
+    //         mouseY > node.y && mouseY < node.y + node.height) {
+    //         infoNode = node;
+    //     }
+    // }
+    recordTime("Draw Grid");
+
+    fill(0);
+    if (infoNode != null) {
+        text("f = " + infoNode.f, 430, 230);
+        text("g = " + infoNode.g, 430, 250);
+        text("h = " + infoNode.h, 430, 270);
+        text("vh = " + infoNode.vh, 430, 290);
+    }
 
     runPauseButton = new Button("run", 430, 20, 50, 30, runpause);
     uiElements.push(runPauseButton);
@@ -203,6 +248,13 @@ function setup() {
     uiElements.push(new SettingBox("AllowDiag", 430, 180, allowDiagonals, toggleDiagonals));
 
     recordTime("Setup");
+
+    var path = calcPath(pathfinder.lastCheckedNode);
+    //console.log("path:");
+    //console.log(path);
+
+    drawPath(path);
+
 }
 
 function searchStep() {
@@ -247,49 +299,53 @@ function drawMap() {
     image(mapGraphic, gamemap.x, gamemap.y);
 }
 
-function draw() {
+// function draw() {
 
-    searchStep();
+//     //searchStep();
 
-    // Draw current state of everything
-    background(255);
+//     // Draw current state of everything
+//     background(255);
 
-    doGUI();
+//     doGUI();
 
-    text("Search status - " + status, 10, 450);
+//     text("Search status - " + status, 10, 450);
 
-    startTime();
+//     startTime();
 
-    drawMap();
+//     drawMap();
 
-    for (var i = 0; i < pathfinder.closedSet.length; i++) {
-        pathfinder.closedSet[i].show(color(255, 0, 0, 50));
-    }
+//     for (var i = 0; i < pathfinder.closedSet.length; i++) {
+//         pathfinder.closedSet[i].show(color(255, 0, 0, 50));
+//         //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
+//     }
 
-    var infoNode = null;
+//     var infoNode = null;
 
-    for (var i = 0; i < pathfinder.openSet.length; i++) {
-        var node = pathfinder.openSet[i];
-        node.show(color(0, 255, 0, 50));
-        if (mouseX > node.x && mouseX < node.x + node.width &&
-            mouseY > node.y && mouseY < node.y + node.height) {
-            infoNode = node;
-        }
-    }
-    recordTime("Draw Grid");
+//     for (var i = 0; i < pathfinder.openSet.length; i++) {
+//         var node = pathfinder.openSet[i];
+//         node.show(color(0, 255, 0, 50));
+//         if (mouseX > node.x && mouseX < node.x + node.width &&
+//             mouseY > node.y && mouseY < node.y + node.height) {
+//             infoNode = node;
+//         }
+//     }
+//     recordTime("Draw Grid");
 
-    fill(0);
-    if (infoNode != null) {
-        text("f = " + infoNode.f, 430, 230);
-        text("g = " + infoNode.g, 430, 250);
-        text("h = " + infoNode.h, 430, 270);
-        text("vh = " + infoNode.vh, 430, 290);
+//     fill(0);
+//     if (infoNode != null) {
+//         text("f = " + infoNode.f, 430, 230);
+//         text("g = " + infoNode.g, 430, 250);
+//         text("h = " + infoNode.h, 430, 270);
+//         text("vh = " + infoNode.vh, 430, 290);
 
-    }
+//     }
 
-    var path = calcPath(pathfinder.lastCheckedNode);
-    drawPath(path);
-}
+//     var path = calcPath(pathfinder.lastCheckedNode);
+//     //console.log("path:");
+//     //console.log(path);
+
+//     drawPath(path);
+// }
 
 function calcPath(endNode) {
     startTime();
@@ -308,7 +364,7 @@ function calcPath(endNode) {
 function drawPath(path) {
     // Drawing path as continuous line
     noFill();
-    stroke(255, 0, 200);
+    stroke(255, 0, 0);
     strokeWeight(gamemap.w / gamemap.cols / 2);
     beginShape();
     for (var i = 0; i < path.length; i++) {

@@ -126,4 +126,41 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
             return -1;
         }
     }
+
+    //returns 0 if search ongoing
+    //returns 1 if goal reached
+    //returns -1 if no solution
+    this.findPath = function(start,end) {
+        return new Promise ((resolve, reject) => {
+
+            this.map = map;
+            this.lastCheckedNode = start;
+            this.openSet = [];
+            // openSet starts with beginning node only
+            this.openSet.push(start);
+            this.closedSet = [];
+            this.start = start;
+            this.end = end;
+            this.allowDiagonals = allowDiagonals;
+
+            var result=0;
+            while (result == 0) {
+                result = this.step();
+                console.log("searching");
+            }
+            console.log("result:"+result);
+            if (result == 1) {
+                console.log("found");
+                console.log("closedSet:");
+                for (var i = 0; i < this.closedSet.length; i++) {
+                    //this.closedSet[i].show(color(255, 0, 0, 50));
+                    console.log("["+this.closedSet[i].j + "][" + this.closedSet[i].i +"]");
+                }
+                resolve();
+            } else {
+                reject();
+            }
+        });
+
+    }
 }

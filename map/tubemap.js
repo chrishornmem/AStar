@@ -19,21 +19,30 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     //console.log(line1End);
     //console.log(line2End);
 
+    var stations = [
+        { name: "", x: 0, y: 0 },
+        { name: "Paddington", x: 5, y: 10 },
+        { name: "Liverpool St", x: 25, y: 10 },
+        { name: "Temple", x: 10, y: 5 },
+        { name: "Embankment", x: 10, y: 25 },
+
+    ]
+
     var points = [
-        { from: [0, 1], to: [3, 1] },
-        { from: [3, 1], to: [3, line1End] },
-        { from: [3,line1End], to: [line2End, line1End] },
-        { from: [line2End, line1End], to: [line2End, rows-3] },
-        { from: [line2End, rows-3], to: [cols-1, rows-3] },
-        { from: [cols-1, rows-3], to: [cols-1, rows-1] },
-        { from: [10, 5], to: [10, 25] },
+        //   { from: [0, 1], to: [3, 1] },
+        //   { from: [3, 1], to: [3, line1End] },
         { from: [5, 10], to: [25, 10] },
-        { from: [35, 10], to: [35, rows-3] },
-        { from: [25, 15], to: [cols-4, 15] }
+        { from: [10, 5], to: [10, 25] },
+        { from: [3, 25], to: [25, 25] },
+        { from: [25, 25], to: [25, 47] },
+        { from: [25, 47], to: [35, 47] },
+        //  { from: [cols-1, rows-3], to: [cols-1, rows-1] },
+        { from: [35, 10], to: [35, 47] },
+        { from: [25, 15], to: [46, 15] }
     ];
 
-    console.log("points:");
-    console.log(points);
+    //console.log("points:");
+    //console.log(points);
 
     // Making a 2D array
     for (var i = 0; i < cols; i++) {
@@ -66,4 +75,9 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
             this.grid[i][j] = new Spot(i, j, x + i * w / cols, y + j * h / rows, w / cols, h / rows, isWall, this.grid);
         }
     }
+
+    this.start = this.grid[10][5];
+    //this.end = this.grid[cols-1][rows-1];
+    this.end = this.grid[35][10];
+
 }
