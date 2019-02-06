@@ -151,10 +151,10 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
             console.log("result:"+result);
             if (result == 1) {
                 console.log("found");
-                console.log("closedSet:");
+                //console.log("closedSet:");
                 for (var i = 0; i < this.closedSet.length; i++) {
                     //this.closedSet[i].show(color(255, 0, 0, 50));
-                    console.log("["+this.closedSet[i].j + "][" + this.closedSet[i].i +"]");
+                    //console.log("["+this.closedSet[i].j + "][" + this.closedSet[i].i +"]");
                 }
                 resolve();
             } else {

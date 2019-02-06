@@ -171,6 +171,7 @@ var pathfinder;
 var status = "";
 var stepsAllowed = 0;
 var runPauseButton;
+var trains;
 
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
@@ -183,14 +184,28 @@ function initaliseSearchExample(rows, cols) {
     start.wall = false;
     end.wall = false;
 
-    pathfinder = new AStarPathFinder(gamemap, start, end, allowDiagonals);
+    trains = new Trains();
+    // Add an initial set of boids into the system
+    //for (var i = 0; i < 10; i++) {
+      var t = new Train();
+      trains.addTrain(t);
+    //}
 
-    pathfinder.findPath(start,end).then(function() {
-        var path = calcPath(pathfinder.lastCheckedNode);
+    console.log("trains:");
+    console.log(trains.trains[0].path);
+    t.findPath().then(function(path) {
         drawPath(path);
-    }).catch(function(error) {
-        console.log(error);
     });
+    
+
+    // pathfinder = new AStarPathFinder(gamemap, start, end, allowDiagonals);
+
+    // pathfinder.findPath(start,end).then(function() {
+    //     var path = calcPath(pathfinder.lastCheckedNode);
+    //     drawPath(path);
+    // }).catch(function(error) {
+    //     console.log(error);
+    // });
 }
 
 function setup() {
@@ -249,7 +264,7 @@ function setup() {
 
     recordTime("Setup");
 
-    var path = calcPath(pathfinder.lastCheckedNode);
+    //var path = calcPath(pathfinder.lastCheckedNode);
     //console.log("path:");
     //console.log(path);
 
@@ -366,9 +381,11 @@ function drawPath(path) {
     noFill();
     stroke(255, 0, 0);
     strokeWeight(gamemap.w / gamemap.cols / 2);
-    beginShape();
+    //beginShape();
     for (var i = 0; i < path.length; i++) {
-        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
+//        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
+        ellipse(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2, 10, 10);
+
     }
-    endShape();
+    //endShape();
 }
