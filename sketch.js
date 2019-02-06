@@ -163,7 +163,6 @@ function doGUI() {
     }
 }
 
-
 var gamemap;
 var uiElements = [];
 var paused = true;
@@ -172,10 +171,13 @@ var status = "";
 var stepsAllowed = 0;
 var runPauseButton;
 var trains;
+var initPaths = []
+var i=0;
+const numTrains = 2;
 
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
-    gamemap = new MapFactory().getMap(cols, rows, 10, 10, 1000, 500, allowDiagonals, percentWalls);
+    gamemap = new MapFactory().getMap(cols, rows, 10, 10, 500, 500, allowDiagonals, percentWalls);
     
     //start = gamemap.grid[0][0];
     //end = gamemap.grid[cols - 1][rows - 1];
@@ -185,18 +187,16 @@ function initaliseSearchExample(rows, cols) {
     // end.wall = false;
 
     trains = new Trains();
-    // Add an initial set of boids into the system
-    //for (var i = 0; i < 10; i++) {
+    // Add an initial set of trains into the system
+    for (var i = 0; i < numTrains; i++) {
       var t = new Train();
       trains.addTrain(t);
-    //}
-
-    console.log("trains:");
-    console.log(trains.trains[0].path);
-    t.findPath().then(function(path) {
-        drawPath(path);
-    });
+      initPaths.push(t.newPath());
+    }
     
+    Promise.all(initPaths).then(function(result) {
+        console.log("finished initialising paths");
+    })
 
     // pathfinder = new AStarPathFinder(gamemap, start, end, allowDiagonals);
 
@@ -210,15 +210,15 @@ function initaliseSearchExample(rows, cols) {
 
 function setup() {
 
-    noLoop();
+    //noLoop();
 
-    background(255);
+//    background(255);
 
-    doGUI();
+    //doGUI();
 
     text("Search status - " + status, 10, 450);
 
-    startTime();
+ //   startTime();
 
 //    if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
         createCanvas(1200, 600);
@@ -314,20 +314,20 @@ function drawMap() {
     image(mapGraphic, gamemap.x, gamemap.y);
 }
 
-// function draw() {
+function draw() {
 
 //     //searchStep();
 
 //     // Draw current state of everything
-//     background(255);
+     background(255);
 
-//     doGUI();
+     //doGUI();
 
 //     text("Search status - " + status, 10, 450);
 
-//     startTime();
+ //    startTime();
 
-//     drawMap();
+     drawMap();
 
 //     for (var i = 0; i < pathfinder.closedSet.length; i++) {
 //         pathfinder.closedSet[i].show(color(255, 0, 0, 50));
@@ -360,7 +360,37 @@ function drawMap() {
 //     //console.log(path);
 
 //     drawPath(path);
-// }
+    console.log("trains:");
+    //console.log(trains.trains[0].path);
+
+    console.log(trains);
+
+    if (initPaths.length > 0) {
+        if (trains.trains[i].currentPos < trains.trains[i].path.length || 
+            trains.trains[i].currentPos == 0) {
+            trains.trains[i].show();
+            trains.trains[i].move();
+
+        } else if (trains.trains[i].currentPos == trains.trains[i].path.length &&
+            trains.trains[i].currentPos > 0) {
+            var temp = trains.trains[i].start;
+       //     trains.trains[i].start = trains.trains[i].end;
+       //     trains.trains[i].end = temp;  
+       //     trains.trains[i].path = [];
+         //   noLoop();
+            trains.trains[i].newPath().then(function(){
+                // trains.trains[i].path = [];
+         //       loop();
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+    }
+    i++;
+    if (i == trains.trains.length) i=0;
+
+
+}
 
 function calcPath(endNode) {
     startTime();
@@ -381,11 +411,11 @@ function drawPath(path) {
     noFill();
     stroke(255, 0, 0);
     strokeWeight(gamemap.w / gamemap.cols / 2);
-    //beginShape();
+    beginShape();
     for (var i = 0; i < path.length; i++) {
-//        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
-        ellipse(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2, 10, 10);
+        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
+//        ellipse(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2, 10, 10);
 
     }
-    //endShape();
+    endShape();
 }

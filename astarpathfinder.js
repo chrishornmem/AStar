@@ -156,7 +156,9 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
                     //this.closedSet[i].show(color(255, 0, 0, 50));
                     //console.log("["+this.closedSet[i].j + "][" + this.closedSet[i].i +"]");
                 }
-                resolve();
+                console.log("found path!");
+                console.log(this.closedSet);
+                resolve(this.closedSet);
             } else {
                 reject();
             }

@@ -35,46 +35,66 @@ function Train() {
 
     var self = this;
 
-    this.startY = stations[startStation].y;
-    this.startX = stations[startStation].x;
-    this.endY = stations[endStation].y;
-    this.endX = stations[endStation].x;
+    self.startY = stations[startStation].y;
+    self.startX = stations[startStation].x;
+    self.endY = stations[endStation].y;
+    self.endX = stations[endStation].x;
 
-    this.start = gamemap.getNode(this.startY, this.startX);
-    this.end = gamemap.getNode(this.endY, this.endX);
+    self.start = gamemap.getNode(self.startY, self.startX);
+    self.end = gamemap.getNode(self.endY, self.endX);
+    self.start.wall = false;
+    self.end.wall = false;
 
-    console.log("starting:");
-    console.log(this.start);
-    console.log("ending:");
-    console.log(this.end);
+    self.reachedEnd = false;
+    self.currentPos = 0;
 
-    this.start.wall = false;
-    this.end.wall = false;
+    self.path = [];
+    self.map = new AStarPathFinder(gamemap, this.start, this.end, allowDiagonals);
 
 }
 
-Train.prototype.findPath = function () {
+Train.prototype.newPath = function () {
     return new Promise((resolve, reject) => {
 
-        var map = new AStarPathFinder(gamemap, this.start, this.end, allowDiagonals);
+        var self = this;
 
-        map.findPath(this.start, this.end).then(function () {
-            self.path = calcPath(map.lastCheckedNode);
-            console.log("found path");
-            console.log(this.path);
-            resolve(this.path);
+        self.map.findPath(self.start, self.end).then(function (path) {
+            self.path = calcPath(self.map.lastCheckedNode);
+            //self.path = path;
+            self.start.wall = false;
+            self.end.wall = false;
+            self.currentPos = 0;
+
+            //console.log("found path");
+            //console.log(self.path);
+            resolve(self.path);
             //this.x = this.startX;
             //this.y = this.startY;
         }).catch(function (error) {
             console.log(error);
+            self.path = [];
             reject();
         });
     });
 }
 
+Train.prototype.show = function() {
+    var i = this.currentPos;
+    if (i < this.path.length) {
+        ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
+    }
+}
+
+Train.prototype.move = function (trains) {
+    //this.move(trains);
+    if (this.currentPos < this.path.length) {
+        this.currentPos++;
+    }
+}
+
 Train.prototype.run = function (trains) {
     //this.move(trains);
-    this.drawRoute();
+    //this.drawRoute();
 }
 
 Train.prototype.drawRoute = function () {
@@ -91,9 +111,6 @@ Train.prototype.drawRoute = function () {
     //endShape();
 }
 
-Train.prototype.move = function (trains) {
-
-}
 
 // Boid.prototype.render = function () {
 //     fill(255, 0, 255);
