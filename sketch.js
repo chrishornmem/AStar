@@ -179,10 +179,10 @@ function initaliseSearchExample(rows, cols) {
     
     //start = gamemap.grid[0][0];
     //end = gamemap.grid[cols - 1][rows - 1];
-    start = gamemap.start;
-    end = gamemap.end;
-    start.wall = false;
-    end.wall = false;
+    // start = gamemap.start;
+    // end = gamemap.end;
+    // start.wall = false;
+    // end.wall = false;
 
     trains = new Trains();
     // Add an initial set of boids into the system

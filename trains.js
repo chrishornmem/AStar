@@ -24,6 +24,9 @@ function Train() {
 
     var startStation = getRandomInt(stations.length);
     var endStation = getRandomInt(stations.length);
+    while (endStation === startStation) {
+        endStation = getRandomInt(stations.length);
+    }
 
     console.log("startStation");
     console.log(startStation);
@@ -32,13 +35,21 @@ function Train() {
 
     var self = this;
 
-    this.startX = stations[startStation].x;
     this.startY = stations[startStation].y;
-    this.endX = stations[endStation].x;
+    this.startX = stations[startStation].x;
     this.endY = stations[endStation].y;
+    this.endX = stations[endStation].x;
 
-    this.start = gamemap.getNode(this.startX, this.startY);
-    this.end = gamemap.getNode(this.endX, this.endY);
+    this.start = gamemap.getNode(this.startY, this.startX);
+    this.end = gamemap.getNode(this.endY, this.endX);
+
+    console.log("starting:");
+    console.log(this.start);
+    console.log("ending:");
+    console.log(this.end);
+
+    this.start.wall = false;
+    this.end.wall = false;
 
 }
 

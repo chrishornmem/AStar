@@ -1,9 +1,6 @@
 let drawLine = (x1, y1, x2, y2, map) => {
 
-    //console.log(x1);
-    //console.log(y1);
-    //console.log(x2);
-    //console.log(y2);
+    console.log(x1+','+y1+'+'+x2+','+y2);
     //console.log(map);
 
     // Iterators, counters required by algorithm
@@ -87,7 +84,7 @@ let drawLine = (x1, y1, x2, y2, map) => {
         }
     }
  }
-
+var stations;
 
 function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     // How many columns and rows?
@@ -110,24 +107,24 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     //console.log(line1End);
     //console.log(line2End);
 
-//     var stations = [
-//         { name: "Paddington", x: 25, y: 30 },   // 0
-//         { name: "Liverpool St", x: 25, y: 70 },  // 1
-//         { name: "Embankment", x: 65, y: 30 }, // 3
-//         { name: "Temple", x: 65  , y: 70 },  // 2
-//         { name: "Westminster", x: 45, y: 15 }, // 4
-//         { name: "Charing Cross", x: 45, y: 85 }, // 5
-//         { name: "Paddington", x: 85, y: 10 },   // 6
-//         { name: "Paddington", x: 10, y: 85 },   // 7
-//         //      { name: "St James Park", x: 25, y: 47 }, // 6
-//   //      { name: "Holborn", x: 35, y: 10 }, // 7
-//   //      { name: "Waterloo", x: 35, y: 47 }, // 8
-//   //      { name: "Bank", x: 25, y: 15 }, // 9
-//   //      { name: "Green Park", x: 46, y: 15 } // 10
-//     ]
-
-    var startStation = 5;
-    var endStation = 6;
+    stations = [
+        { name: "Paddington", x: 25, y: 30 },   // 0
+        { name: "Liverpool St", x: 25, y: 70 },  // 1
+        { name: "Embankment", x: 65, y: 30 }, // 3
+        { name: "Temple", x: 65  , y: 70 },  // 2
+        { name: "Westminster", x: 45, y: 15 }, // 4
+        { name: "Charing Cross", x: 45, y: 85 }, // 5
+        { name: "Paddington", x: 85, y: 10 },   // 6
+        { name: "Paddington", x: 10, y: 85 }   // 7
+        //      { name: "St James Park", x: 25, y: 47 }, // 6
+  //      { name: "Holborn", x: 35, y: 10 }, // 7
+  //      { name: "Waterloo", x: 35, y: 47 }, // 8
+  //      { name: "Bank", x: 25, y: 15 }, // 9
+  //      { name: "Green Park", x: 46, y: 15 } // 10
+    ]
+    
+    //var startStation = 5;
+    //var endStation = 6;
 
 
     var points = [
@@ -189,13 +186,13 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
         }
     }
 
-    var startX = stations[startStation].x;
-    var startY = stations[startStation].y;
-    this.start = this.grid[startY][startX];
+    // var startX = stations[startStation].x;
+    // var startY = stations[startStation].y;
+    // this.start = this.grid[startY][startX];
 
-    var endX = stations[endStation].x;
-    var endY = stations[endStation].y;
-    this.end = this.grid[endY][endX];
+    // var endX = stations[endStation].x;
+    // var endY = stations[endStation].y;
+    // this.end = this.grid[endY][endX];
     //this.end = this.grid[cols-1][rows-1];
     //this.end = this.grid[25][25];
 
