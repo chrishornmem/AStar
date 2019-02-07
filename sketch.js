@@ -67,7 +67,7 @@ function SettingBox(label, x, y, isSet, callback) {
     this.isSet = isSet;
     this.callback = callback;
 
-    this.show = function() {
+    this.show = function () {
         //noFill();
         strokeWeight(1);
         stroke(0);
@@ -82,7 +82,7 @@ function SettingBox(label, x, y, isSet, callback) {
         text(label, this.x + 25, this.y + 15);
     }
 
-    this.mouseClick = function(x, y) {
+    this.mouseClick = function (x, y) {
         if (x > this.x && x <= this.x + 20 &&
             y > this.y && y <= this.y + 20) {
             this.isSet = !this.isSet;
@@ -100,7 +100,7 @@ function Button(label, x, y, w, h, callback) {
     this.h = h;
     this.callback = callback;
 
-    this.show = function() {
+    this.show = function () {
         stroke(0);
         strokeWeight(1);
         noFill();
@@ -110,7 +110,7 @@ function Button(label, x, y, w, h, callback) {
         text(this.label, this.x + 5, this.y + 5, this.w - 10, this.h - 10);
     }
 
-    this.mouseClick = function(x, y) {
+    this.mouseClick = function (x, y) {
         if (this.callback != null &&
             x > this.x && x <= this.x + this.w &&
             y > this.y && y <= this.y + this.h) {
@@ -119,11 +119,11 @@ function Button(label, x, y, w, h, callback) {
     }
 }
 
-  // Start and end
-  // start = grid[0][0];
-  // end = grid[cols - 1][rows - 1];
-  // start.wall = false;
-  // end.wall = false;
+// Start and end
+// start = grid[0][0];
+// end = grid[cols - 1][rows - 1];
+// start.wall = false;
+// end.wall = false;
 
 function step(button) {
     pauseUnpause(true);
@@ -171,14 +171,15 @@ var status = "";
 var stepsAllowed = 0;
 var runPauseButton;
 var trains;
-var initPaths = []
-var i=0;
-const numTrains = 2;
+var initPaths = [];
+var i = 0;
+const numTrains = 1;
+var start = false;
 
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
     gamemap = new MapFactory().getMap(cols, rows, 10, 10, 500, 500, allowDiagonals, percentWalls);
-    
+
     //start = gamemap.grid[0][0];
     //end = gamemap.grid[cols - 1][rows - 1];
     // start = gamemap.start;
@@ -189,14 +190,29 @@ function initaliseSearchExample(rows, cols) {
     trains = new Trains();
     // Add an initial set of trains into the system
     for (var i = 0; i < numTrains; i++) {
-      var t = new Train();
-      trains.addTrain(t);
-      initPaths.push(t.newPath());
+        var t = new Train();
+        trains.addTrain(t);
+        initPaths.push(t.newPath());
     }
-    
-    Promise.all(initPaths).then(function(result) {
-        console.log("finished initialising paths");
-    })
+
+    initialise = function(t) {
+        console.log("calling newPath");
+        return t.newPath();
+    }
+
+    // Promise.all(initPaths).then(function (result) {
+    //     console.log("finished initialising paths");
+    //     loop();
+    //     start = true;
+    // })
+
+    Promise.mapSeries(trains.trains, initialise).then(function() {
+        console.log("finished");
+        start = true;
+        loop();
+    });
+
+
 
     // pathfinder = new AStarPathFinder(gamemap, start, end, allowDiagonals);
 
@@ -210,31 +226,31 @@ function initaliseSearchExample(rows, cols) {
 
 function setup() {
 
-    //noLoop();
+    noLoop();
 
-//    background(255);
+    //    background(255);
 
     //doGUI();
 
     text("Search status - " + status, 10, 450);
 
- //   startTime();
+    //   startTime();
 
-//    if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
-        createCanvas(1200, 600);
- //   } else {
-//        var sz = min(windowWidth, windowHeight);
- //       createCanvas(sz, sz);
-  //      }
+    //    if (getURL().toLowerCase().indexOf("fullscreen") === -1) {
+    createCanvas(1200, 600);
+    //   } else {
+    //        var sz = min(windowWidth, windowHeight);
+    //       createCanvas(sz, sz);
+    //      }
     console.log('A*');
     initaliseSearchExample(cols, rows);
 
     drawMap();
 
-   // for (var i = 0; i < pathfinder.closedSet.length; i++) {
-   //     pathfinder.closedSet[i].show(color(255, 0, 0, 50));
-        //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
-   // }
+    // for (var i = 0; i < pathfinder.closedSet.length; i++) {
+    //     pathfinder.closedSet[i].show(color(255, 0, 0, 50));
+    //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
+    // }
 
     var infoNode = null;
 
@@ -316,94 +332,102 @@ function drawMap() {
 
 function draw() {
 
-//     //searchStep();
+    //     //searchStep();
 
-//     // Draw current state of everything
-     background(255);
+    //     // Draw current state of everything
+    background(255);
 
-     //doGUI();
+    //doGUI();
 
-//     text("Search status - " + status, 10, 450);
+    //     text("Search status - " + status, 10, 450);
 
- //    startTime();
+    //    startTime();
 
-     drawMap();
+    drawMap();
 
-//     for (var i = 0; i < pathfinder.closedSet.length; i++) {
-//         pathfinder.closedSet[i].show(color(255, 0, 0, 50));
-//         //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
-//     }
+    //     for (var i = 0; i < pathfinder.closedSet.length; i++) {
+    //         pathfinder.closedSet[i].show(color(255, 0, 0, 50));
+    //         //console.log("["+pathfinder.closedSet[i].i + "][" + pathfinder.closedSet[i].j +"]");
+    //     }
 
-//     var infoNode = null;
+    //     var infoNode = null;
 
-//     for (var i = 0; i < pathfinder.openSet.length; i++) {
-//         var node = pathfinder.openSet[i];
-//         node.show(color(0, 255, 0, 50));
-//         if (mouseX > node.x && mouseX < node.x + node.width &&
-//             mouseY > node.y && mouseY < node.y + node.height) {
-//             infoNode = node;
-//         }
-//     }
-//     recordTime("Draw Grid");
+    //     for (var i = 0; i < pathfinder.openSet.length; i++) {
+    //         var node = pathfinder.openSet[i];
+    //         node.show(color(0, 255, 0, 50));
+    //         if (mouseX > node.x && mouseX < node.x + node.width &&
+    //             mouseY > node.y && mouseY < node.y + node.height) {
+    //             infoNode = node;
+    //         }
+    //     }
+    //     recordTime("Draw Grid");
 
-//     fill(0);
-//     if (infoNode != null) {
-//         text("f = " + infoNode.f, 430, 230);
-//         text("g = " + infoNode.g, 430, 250);
-//         text("h = " + infoNode.h, 430, 270);
-//         text("vh = " + infoNode.vh, 430, 290);
+    //     fill(0);
+    //     if (infoNode != null) {
+    //         text("f = " + infoNode.f, 430, 230);
+    //         text("g = " + infoNode.g, 430, 250);
+    //         text("h = " + infoNode.h, 430, 270);
+    //         text("vh = " + infoNode.vh, 430, 290);
 
-//     }
+    //     }
 
-//     var path = calcPath(pathfinder.lastCheckedNode);
-//     //console.log("path:");
-//     //console.log(path);
+    //     var path = calcPath(pathfinder.lastCheckedNode);
+    //     //console.log("path:");
+    //     //console.log(path);
 
-//     drawPath(path);
-    console.log("trains:");
+    //     drawPath(path);
+    //console.log("trains:");
     //console.log(trains.trains[0].path);
 
-    console.log(trains);
+    //console.log(trains);
 
-    if (initPaths.length > 0) {
-        if (trains.trains[i].currentPos < trains.trains[i].path.length || 
-            trains.trains[i].currentPos == 0) {
-            trains.trains[i].show();
-            trains.trains[i].move();
-
-        } else if (trains.trains[i].currentPos == trains.trains[i].path.length &&
-            trains.trains[i].currentPos > 0) {
-            var temp = trains.trains[i].start;
-       //     trains.trains[i].start = trains.trains[i].end;
-       //     trains.trains[i].end = temp;  
-       //     trains.trains[i].path = [];
-         //   noLoop();
-            trains.trains[i].newPath().then(function(){
-                // trains.trains[i].path = [];
-         //       loop();
-            }).catch(function(error) {
-                console.log(error);
-            });
-        }
+    if (start) {
+        trains.run();
     }
-    i++;
-    if (i == trains.trains.length) i=0;
+    // if (trains.trains[i].currentPos < trains.trains[i].path.length || 
+    //     trains.trains[i].currentPos == 0) {
+    //     trains.trains[i].show();
+    //     trains.trains[i].move();
+
+    // } else if (trains.trains[i].currentPos == trains.trains[i].path.length &&
+    //     trains.trains[i].currentPos > 0) {
+    //     var temp = trains.trains[i].start;
+    //     trains.trains[i].start = trains.trains[i].end;
+    //     trains.trains[i].end = temp;  
+    //     trains.trains[i].path = [];
+    //   noLoop();
+    //     trains.trains[i].newPath().then(function(){
+    //         // trains.trains[i].path = [];
+    //  //       loop();
+    //     }).catch(function(error) {
+    //         console.log(error);
+    //     });
+    //     }
+    // }
+    // i++;
+    // if (i == trains.trains.length) i=0;
 
 
 }
 
 function calcPath(endNode) {
-    startTime();
-    // Find the path by working backwards
-    path = [];
-    var temp = endNode;
-    path.push(temp);
-    while (temp.previous) {
-        path.push(temp.previous);
-        temp = temp.previous;
-    }
-    recordTime("Calc Path");
-    return path
+    return new Promise((resolve, reject) => {
+
+        startTime();
+        // Find the path by working backwards
+        path = [];
+        var temp = endNode;
+        path.push(temp);
+        while (temp.previous && path.length < 2000) {
+            path.push(temp.previous);
+            temp = temp.previous;
+            console.log("calcPath");
+        }
+        recordTime("Calc Path");
+        resolve(path);
+
+        //return path
+    });
 }
 
 function drawPath(path) {
@@ -414,7 +438,7 @@ function drawPath(path) {
     beginShape();
     for (var i = 0; i < path.length; i++) {
         vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
-//        ellipse(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2, 10, 10);
+        //        ellipse(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2, 10, 10);
 
     }
     endShape();

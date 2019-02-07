@@ -11,6 +11,8 @@ function Trains() {
 }
 
 Trains.prototype.run = function () {
+   // console.log("trains run");
+
     for (var i = 0; i < this.trains.length; i++) {
         this.trains[i].run(this.trains);  // Passing the entire list of trains to each train individually
     }
@@ -55,11 +57,16 @@ function Train() {
 
 Train.prototype.newPath = function () {
     return new Promise((resolve, reject) => {
+ //       console.log("newPath");
 
         var self = this;
 
-        self.map.findPath(self.start, self.end).then(function (path) {
-            self.path = calcPath(self.map.lastCheckedNode);
+        self.map.findPath(self.start, self.end).then(function () {
+            return calcPath(self.map.lastCheckedNode);
+        }).then(function(path) {
+            self.path = path;
+            console.log("called calcPath");
+            console.log(self.path);
             //self.path = path;
             self.start.wall = false;
             self.end.wall = false;
@@ -79,36 +86,52 @@ Train.prototype.newPath = function () {
 }
 
 Train.prototype.show = function() {
+ //   console.log("show");
+
     var i = this.currentPos;
     if (i < this.path.length) {
         ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
     }
 }
 
-Train.prototype.move = function (trains) {
-    //this.move(trains);
-    if (this.currentPos < this.path.length) {
-        this.currentPos++;
-    }
-}
-
 Train.prototype.run = function (trains) {
-    //this.move(trains);
-    //this.drawRoute();
+  //  console.log("run");
+
+    this.move(trains);
+    this.render();
 }
 
-Train.prototype.drawRoute = function () {
-    // Drawing path as continuous line
-    noFill();
-    stroke(255, 0, 0);
-    strokeWeight(gamemap.w / gamemap.cols / 2);
-    //beginShape();
-    for (var i = 0; i < this.path.length; i++) {
-        //        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
-        ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
+Train.prototype.move = function (trains) {
+  //  console.log("move");
 
+    //this.move(trains);
+    if (this.path && this.currentPos < this.path.length) {
+        this.currentPos++;
+    } else if (this.currentPos == this.path.length) {
+        this.currentPos = 0;
     }
-    //endShape();
+}
+
+Train.prototype.render = function () {
+//    console.log("render");
+    var i = this.currentPos;
+    if (this.path[i]) {
+      //  noFill();
+      //  stroke(255, 0, 0);
+      //  strokeWeight(gamemap.w / gamemap.cols / 2);
+    
+        //console.log("this.path[i]");
+  //      console.log(this.path[i].x);
+  //      console.log(this.path[i].y);
+        //beginShape();
+        //for (var i = 0; i < this.path.length; i++) {
+            //        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
+            ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
+    
+        //}
+        //endShape();
+     }
+
 }
 
 
