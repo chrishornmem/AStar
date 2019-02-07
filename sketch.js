@@ -173,13 +173,13 @@ var runPauseButton;
 var trains;
 var initPaths = [];
 var i = 0;
-const numTrains = 1;
+const numTrains = 20;
 var start = false;
 
 function initaliseSearchExample(rows, cols) {
     mapGraphic = null;
     gamemap = new MapFactory().getMap(cols, rows, 10, 10, 500, 500, allowDiagonals, percentWalls);
-
+    console.log(gamemap)
     //start = gamemap.grid[0][0];
     //end = gamemap.grid[cols - 1][rows - 1];
     // start = gamemap.start;
@@ -190,9 +190,9 @@ function initaliseSearchExample(rows, cols) {
     trains = new Trains();
     // Add an initial set of trains into the system
     for (var i = 0; i < numTrains; i++) {
-        var t = new Train();
+        var t = new Train(gamemap.cols, gamemap.rows, gamemap.map, gamemap.x, gamemap.y, gamemap.w, gamemap.h);
         trains.addTrain(t);
-        initPaths.push(t.newPath());
+     //   initPaths.push(t.newPath());
     }
 
     initialise = function(t) {
@@ -210,6 +210,9 @@ function initaliseSearchExample(rows, cols) {
         console.log("finished");
         start = true;
         loop();
+    }).catch(function(error) {
+        console.log(error);
+        exit(0);
     });
 
 
@@ -316,18 +319,19 @@ function searchStep() {
 var mapGraphic = null;
 
 function drawMap() {
+    //debugger;
     if (mapGraphic == null) {
-        for (var i = 0; i < gamemap.cols; i++) {
-            for (var j = 0; j < gamemap.rows; j++) {
-                if (gamemap.grid[i][j].wall) {
-                    gamemap.grid[i][j].show(color(255));
+        for (var i = 0; i < cols; i++) {
+            for (var j = 0; j < rows; j++) {
+                if (trains.trains[0].grid[i][j].wall) {
+                    trains.trains[0].grid[i][j].show(color(255));
                 }
             }
         }
-        mapGraphic = get(gamemap.x, gamemap.y, gamemap.w, gamemap.h);
+        mapGraphic = get(trains.trains[0].map.x, trains.trains[0].map.y, trains.trains[0].map.w, trains.trains[0].map.h);
     }
 
-    image(mapGraphic, gamemap.x, gamemap.y);
+    image(mapGraphic, trains.trains[0].x, trains.trains[0].y);
 }
 
 function draw() {
@@ -382,7 +386,10 @@ function draw() {
     //console.log(trains);
 
     if (start) {
+       // loop();
         trains.run();
+    } else {
+        noLoop();
     }
     // if (trains.trains[i].currentPos < trains.trains[i].path.length || 
     //     trains.trains[i].currentPos == 0) {
@@ -413,18 +420,34 @@ function draw() {
 function calcPath(endNode) {
     return new Promise((resolve, reject) => {
 
+        console.log("endNode");
+        console.log(endNode);
+
         startTime();
         // Find the path by working backwards
         path = [];
         var temp = endNode;
         path.push(temp);
-        while (temp.previous && path.length < 2000) {
+        if (!temp.previous) {
+            reject("temp undefined");
+            return;
+        } 
+        while (temp.previous && path.length < 1000) {
             path.push(temp.previous);
             temp = temp.previous;
-            console.log("calcPath");
+          //  console.log("temp");
+          //  console.log(temp.prevous);
+
         }
         recordTime("Calc Path");
-        resolve(path);
+        if(path.length >= 1000) {
+            reject(path);
+            console.log(path)
+        } else {
+            resolve(path);
+
+        }
+
 
         //return path
     });

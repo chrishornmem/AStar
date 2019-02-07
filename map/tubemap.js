@@ -92,7 +92,7 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     this.rows = rows;
 
     // This will the 2D array
-    this.grid = [];
+   // this.grid = [];
     this.path = [];
     this.map = [];
 
@@ -138,16 +138,12 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
 //        { from: 9, to: 10 }
     ];
 
-    this.getNode = function(x, y) {
-        return this.grid[x][y];
-    }
-
     //console.log("points:");
     //console.log(points);
 
     // Making a 2D array
     for (var i = 0; i < cols; i++) {
-        this.grid[i] = [];
+        //this.grid[i] = [];
         this.map[i] = [];
     }
 
@@ -172,18 +168,6 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
         var fromStation = points[i].from;
         var toStation = points[i].to;
         drawLine(stations[fromStation].x, stations[fromStation].y, stations[toStation].x, stations[toStation].y, this.map)
-    }
-
-    var isWall;
-    for (var i = 0; i < cols; i++) {
-        for (var j = 0; j < rows; j++) {
-            if (!this.map[i][j]) {
-                isWall = true;
-            } else {
-                isWall = false;
-            }
-            this.grid[i][j] = new Spot(i, j, x + i * w / cols, y + j * h / rows, w / cols, h / rows, isWall, this.grid);
-        }
     }
 
     // var startX = stations[startStation].x;

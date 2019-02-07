@@ -11,7 +11,7 @@ function Trains() {
 }
 
 Trains.prototype.run = function () {
-   // console.log("trains run");
+   console.log("trains run");
 
     for (var i = 0; i < this.trains.length; i++) {
         this.trains[i].run(this.trains);  // Passing the entire list of trains to each train individually
@@ -22,7 +22,20 @@ Trains.prototype.addTrain = function (t) {
     this.trains.push(t);
 }
 
-function Train() {
+function Train(cols, rows, map, x, y, w, h) {
+
+    this.cols = cols;
+    this.rows = rows;
+
+    // This will the 2D array
+   // this.grid = [];
+    this.path = [];
+    this.map = [];
+
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
 
     var startStation = getRandomInt(stations.length);
     var endStation = getRandomInt(stations.length);
@@ -37,13 +50,31 @@ function Train() {
 
     var self = this;
 
+    self.grid = [];
+    // Making a 2D array
+    for (var i = 0; i < cols; i++) {
+        self.grid[i] = [];
+    }
+
     self.startY = stations[startStation].y;
     self.startX = stations[startStation].x;
     self.endY = stations[endStation].y;
     self.endX = stations[endStation].x;
 
-    self.start = gamemap.getNode(self.startY, self.startX);
-    self.end = gamemap.getNode(self.endY, self.endX);
+    var isWall;
+    for (var i = 0; i < cols; i++) {
+        for (var j = 0; j < rows; j++) {
+            if (!map[i][j]) {
+                isWall = true;
+            } else {
+                isWall = false;
+            }
+            self.grid[i][j] = new Spot(i, j, x + i * w / cols, y + j * h / rows, w / cols, h / rows, isWall, self.grid);
+        }
+    }
+
+    self.start = self.grid[self.startY][self.startX];
+    self.end = self.grid[self.endY][self.endX];
     self.start.wall = false;
     self.end.wall = false;
 
@@ -51,15 +82,20 @@ function Train() {
     self.currentPos = 0;
 
     self.path = [];
-    self.map = new AStarPathFinder(gamemap, this.start, this.end, allowDiagonals);
 
 }
 
 Train.prototype.newPath = function () {
     return new Promise((resolve, reject) => {
- //       console.log("newPath");
+        console.log("newPath");
+        console.log("start");
+        console.log(this.start);
+        console.log("end");
+        console.log(this.end);
 
         var self = this;
+        self.map = new AStarPathFinder(gamemap, this.start, this.end, allowDiagonals);
+
 
         self.map.findPath(self.start, self.end).then(function () {
             return calcPath(self.map.lastCheckedNode);
@@ -80,7 +116,7 @@ Train.prototype.newPath = function () {
         }).catch(function (error) {
             console.log(error);
             self.path = [];
-            reject();
+            reject(error);
         });
     });
 }
@@ -96,9 +132,10 @@ Train.prototype.show = function() {
 
 Train.prototype.run = function (trains) {
   //  console.log("run");
-
-    this.move(trains);
-    this.render();
+    if (this.path.length > 0) {
+        this.move(trains);
+        this.render();
+    }
 }
 
 Train.prototype.move = function (trains) {
@@ -107,7 +144,7 @@ Train.prototype.move = function (trains) {
     //this.move(trains);
     if (this.path && this.currentPos < this.path.length) {
         this.currentPos++;
-    } else if (this.currentPos == this.path.length) {
+    } else if (this.path && this.currentPos == this.path.length) {
         this.currentPos = 0;
     }
 }
