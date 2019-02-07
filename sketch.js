@@ -230,7 +230,7 @@ function initaliseSearchExample(rows, cols) {
 function setup() {
 
     noLoop();
-
+    frameRate(15); 
     //    background(255);
 
     //doGUI();
@@ -328,7 +328,7 @@ function drawMap() {
                 }
             }
         }
-        mapGraphic = get(trains.trains[0].map.x, trains.trains[0].map.y, trains.trains[0].map.w, trains.trains[0].map.h);
+        mapGraphic = get(trains.trains[0].x, trains.trains[0].y, trains.trains[0].w, trains.trains[0].h);
     }
 
     image(mapGraphic, trains.trains[0].x, trains.trains[0].y);
@@ -339,7 +339,7 @@ function draw() {
     //     //searchStep();
 
     //     // Draw current state of everything
-    background(255);
+    background("black");
 
     //doGUI();
 

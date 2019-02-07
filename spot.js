@@ -1,5 +1,5 @@
-const wallColor_r = 0;
-const wallColor_g = 0;
+const wallColor_r = 255;
+const wallColor_g = 255;
 const wallColor_b = 255;
 
 // Daniel Shiffman

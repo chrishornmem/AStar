@@ -11,7 +11,7 @@ function Trains() {
 }
 
 Trains.prototype.run = function () {
-   console.log("trains run");
+    console.log("trains run");
 
     for (var i = 0; i < this.trains.length; i++) {
         this.trains[i].run(this.trains);  // Passing the entire list of trains to each train individually
@@ -28,7 +28,7 @@ function Train(cols, rows, map, x, y, w, h) {
     this.rows = rows;
 
     // This will the 2D array
-   // this.grid = [];
+    // this.grid = [];
     this.path = [];
     this.map = [];
 
@@ -78,7 +78,7 @@ function Train(cols, rows, map, x, y, w, h) {
     self.start.wall = false;
     self.end.wall = false;
 
-    self.reachedEnd = false;
+    self.forwards = true;
     self.currentPos = 0;
 
     self.path = [];
@@ -99,7 +99,7 @@ Train.prototype.newPath = function () {
 
         self.map.findPath(self.start, self.end).then(function () {
             return calcPath(self.map.lastCheckedNode);
-        }).then(function(path) {
+        }).then(function (path) {
             self.path = path;
             console.log("called calcPath");
             console.log(self.path);
@@ -121,17 +121,19 @@ Train.prototype.newPath = function () {
     });
 }
 
-Train.prototype.show = function() {
- //   console.log("show");
+Train.prototype.show = function () {
+    //   console.log("show");
 
     var i = this.currentPos;
     if (i < this.path.length) {
-        ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
+        fill("red");
+        noStroke();
+        ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 80, 80);
     }
 }
 
 Train.prototype.run = function (trains) {
-  //  console.log("run");
+    //  console.log("run");
     if (this.path.length > 0) {
         this.move(trains);
         this.render();
@@ -139,35 +141,43 @@ Train.prototype.run = function (trains) {
 }
 
 Train.prototype.move = function (trains) {
-  //  console.log("move");
+    //  console.log("move");
 
     //this.move(trains);
-    if (this.path && this.currentPos < this.path.length) {
+    if (this.path && this.currentPos == 0 && !this.forwards) {
         this.currentPos++;
-    } else if (this.path && this.currentPos == this.path.length) {
-        this.currentPos = 0;
+        this.forwards = !this.forwards;
+    } else if (this.path && this.currentPos == this.path.length && this.forwards) {
+        this.currentPos--;
+        this.forwards = !this.forwards;
+    } else if (this.path && this.currentPos < this.path.length && this.forwards) {
+        this.currentPos++;
+    } else if (this.path && this.currentPos < this.path.length && !this.forwards) {
+        this.currentPos--;
     }
 }
 
 Train.prototype.render = function () {
-//    console.log("render");
+    //    console.log("render");
     var i = this.currentPos;
     if (this.path[i]) {
-      //  noFill();
-      //  stroke(255, 0, 0);
-      //  strokeWeight(gamemap.w / gamemap.cols / 2);
-    
+        //  noFill();
+        //  stroke(255, 0, 0);
+        //  strokeWeight(gamemap.w / gamemap.cols / 2);
+
         //console.log("this.path[i]");
-  //      console.log(this.path[i].x);
-  //      console.log(this.path[i].y);
+        //      console.log(this.path[i].x);
+        //      console.log(this.path[i].y);
         //beginShape();
         //for (var i = 0; i < this.path.length; i++) {
-            //        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
-            ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 10, 10);
-    
+        //        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
+        fill("red");
+        noStroke();
+        ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 15, 15);
+
         //}
         //endShape();
-     }
+    }
 
 }
 
