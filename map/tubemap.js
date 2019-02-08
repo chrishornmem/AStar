@@ -1,4 +1,4 @@
-let drawLine = (x1, y1, x2, y2, map) => {
+let drawLine = (x1, y1, x2, y2, map, ad) => {
 
     console.log(x1+','+y1+'+'+x2+','+y2);
     //console.log(map);
@@ -25,7 +25,10 @@ let drawLine = (x1, y1, x2, y2, map) => {
         //pixel(x, y); // Draw first pixel
         //console.log(x + ',' + y);
 
-        map[y][x] = true;
+        map[y][x] = {
+            present: true,
+            allowedDirections: ad
+        };
         // Rasterize the line
         for (i = 0; x < xe; i++) {
             x = x + 1;
@@ -45,9 +48,11 @@ let drawLine = (x1, y1, x2, y2, map) => {
             //pixel(x, y);
             //console.log(x + ',' + y);
 
-            map[y][x] = true;
-       //     map[y+1][x] = true;
-       //     map[y-1][x] = true;
+            map[y][x] = {
+                present: true,
+                allowedDirections: ad
+            };
+
         }
     } else { // The line is Y-axis dominant
         // Line is drawn bottom to top
@@ -60,7 +65,10 @@ let drawLine = (x1, y1, x2, y2, map) => {
         // Rasterize the line
         //console.log(x + ',' + y);
 
-        map[y][x] = true;
+        map[y][x] = {
+            present: true,
+            allowedDirections: ad
+        };
         for (i = 0; y < ye; i++) {
             y = y + 1;
             // Deal with octants...
@@ -78,9 +86,10 @@ let drawLine = (x1, y1, x2, y2, map) => {
             // currently rasterized position
             //pixel(x, y);
             // console.log(x + ',' + y);
-            map[y][x] = true;
-        //    map[y][x+1] = true;
-        //    map[y][x-1] = true;
+            map[y][x] = {
+                present: true,
+                allowedDirections: ad
+            };
         }
     }
  }
@@ -110,8 +119,8 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     stations = [
         { name: "Paddington", x: 25, y: 30 },   // 0
         { name: "Liverpool St", x: 25, y: 70 },  // 1
-        { name: "Embankment", x: 65, y: 30 }, // 3
-        { name: "Temple", x: 65  , y: 70 },  // 2
+        { name: "Embankment", x: 65, y: 30 }, // 2
+        { name: "Temple", x: 65  , y: 70 },  // 3
         { name: "Westminster", x: 45, y: 15 }, // 4
         { name: "Charing Cross", x: 45, y: 85 }, // 5
         { name: "Paddington", x: 85, y: 10 },   // 6
@@ -128,12 +137,12 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
 
 
     var points = [
-        { from: 0, to: 1 },
-        { from: 2, to: 3 },
-        { from: 1, to: 3 },
-        { from: 0, to: 2 },
-        { from: 4, to: 5 },
-        { from: 6, to: 7 }
+        { from: 0, to: 1, allowedDirections: ['W'] },
+        { from: 2, to: 3, allowedDirections: ['E'] },
+        { from: 3, to: 1, allowedDirections: ['N'] },
+        { from: 0, to: 2, allowedDirections: ['S'] },
+        { from: 4, to: 5, allowedDirections: ['A'] },
+        { from: 6, to: 7, allowedDirections: ['A'] }
 //        { from: 7, to: 8 },
 //        { from: 9, to: 10 }
     ];
@@ -167,7 +176,7 @@ function TubeMap(cols, rows, x, y, w, h, allowDiagonals, wallRatio) {
     for (var i = 0; i < points.length; i++) {
         var fromStation = points[i].from;
         var toStation = points[i].to;
-        drawLine(stations[fromStation].x, stations[fromStation].y, stations[toStation].x, stations[toStation].y, this.map)
+        drawLine(stations[fromStation].x, stations[fromStation].y, stations[toStation].x, stations[toStation].y, this.map, points[i].allowedDirections)
     }
 
     // var startX = stations[startStation].x;

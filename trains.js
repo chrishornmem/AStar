@@ -1,3 +1,13 @@
+var colors = [
+    "red",
+    "blue",
+    "yellow",
+    "green",
+    "purple",
+    "black",
+    "brown"
+]
+
 function drawRoute(path) {
 
 }
@@ -11,7 +21,7 @@ function Trains() {
 }
 
 Trains.prototype.run = function () {
-    console.log("trains run");
+  //console.log("trains run");
 
     for (var i = 0; i < this.trains.length; i++) {
         this.trains[i].run(this.trains);  // Passing the entire list of trains to each train individually
@@ -37,11 +47,17 @@ function Train(cols, rows, map, x, y, w, h) {
     this.w = w;
     this.h = h;
 
+    var colorIndex = getRandomInt(colors.length);
+    this.color = colors[colorIndex];
+    
     var startStation = getRandomInt(stations.length);
     var endStation = getRandomInt(stations.length);
     while (endStation === startStation) {
         endStation = getRandomInt(stations.length);
     }
+
+    //startStation=0;
+    //endStation=2;
 
     console.log("startStation");
     console.log(startStation);
@@ -61,15 +77,16 @@ function Train(cols, rows, map, x, y, w, h) {
     self.endY = stations[endStation].y;
     self.endX = stations[endStation].x;
 
-    var isWall;
+    var isWall, ad = undefined;
     for (var i = 0; i < cols; i++) {
         for (var j = 0; j < rows; j++) {
             if (!map[i][j]) {
                 isWall = true;
             } else {
                 isWall = false;
+                ad = map[i][j].allowedDirections;
             }
-            self.grid[i][j] = new Spot(i, j, x + i * w / cols, y + j * h / rows, w / cols, h / rows, isWall, self.grid);
+            self.grid[i][j] = new Spot(i, j, x + i * w / cols, y + j * h / rows, w / cols, h / rows, isWall, self.grid, ad);
         }
     }
 
@@ -95,7 +112,6 @@ Train.prototype.newPath = function () {
 
         var self = this;
         self.map = new AStarPathFinder(gamemap, this.start, this.end, allowDiagonals);
-
 
         self.map.findPath(self.start, self.end).then(function () {
             return calcPath(self.map.lastCheckedNode);
@@ -143,18 +159,25 @@ Train.prototype.run = function (trains) {
 Train.prototype.move = function (trains) {
     //  console.log("move");
 
-    //this.move(trains);
-    if (this.path && this.currentPos == 0 && !this.forwards) {
-        this.currentPos++;
-        this.forwards = !this.forwards;
-    } else if (this.path && this.currentPos == this.path.length && this.forwards) {
-        this.currentPos--;
-        this.forwards = !this.forwards;
-    } else if (this.path && this.currentPos < this.path.length && this.forwards) {
-        this.currentPos++;
-    } else if (this.path && this.currentPos < this.path.length && !this.forwards) {
-        this.currentPos--;
+    function bounce () {
+        if (this.path && this.currentPos == 0 && !this.forwards) {
+            this.currentPos++;
+            this.forwards = !this.forwards;
+        } else if (this.path && this.currentPos == this.path.length && this.forwards) {
+            this.currentPos--;
+            this.forwards = !this.forwards;
+        } else if (this.path && this.currentPos < this.path.length && this.forwards) {
+            this.currentPos++;
+        } else if (this.path && this.currentPos < this.path.length && !this.forwards) {
+            this.currentPos--;
+        }
     }
+
+    if (this.currentPos == this.path.length)
+        this.currentPos = 0;
+    else
+        this.currentPos++;
+
 }
 
 Train.prototype.render = function () {
@@ -171,7 +194,8 @@ Train.prototype.render = function () {
         //beginShape();
         //for (var i = 0; i < this.path.length; i++) {
         //        vertex(path[i].x + path[i].width / 2, path[i].y + path[i].height / 2);
-        fill("red");
+
+        fill(this.color);
         noStroke();
         ellipse(this.path[i].x + this.path[i].width / 2, this.path[i].y + this.path[i].height / 2, 15, 15);
 

@@ -10,7 +10,7 @@ const wallColor_b = 255;
 // Part 3: https://youtu.be/jwRT4PCT6RU
 
 // An object to describe a spot in the grid
-function Spot(i, j, x, y, width, height, isWall, grid) {
+function Spot(i, j, x, y, width, height, isWall, grid, ad) {
 
     this.grid = grid;
 
@@ -21,6 +21,7 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.allowedDirections = ad;
 
     // f, g, and h values for A*
     this.f = 0;
@@ -42,9 +43,9 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     var drawingOption = 1;
 
     // Display me
-    this.show = function(color) {
+    this.show = function (color) {
         if (this.wall) {
-            fill(wallColor_r,wallColor_g,wallColor_b);
+            fill(wallColor_r, wallColor_g, wallColor_b);
             noStroke();
 
             if (drawingOption === 0) {
@@ -53,7 +54,7 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
                 rect(this.x, this.y, this.width, this.height);
             }
 
-            stroke(wallColor_r,wallColor_g,wallColor_b);
+            stroke(wallColor_r, wallColor_g, wallColor_b);
             strokeWeight(this.width / 2);
 
             var nWalls = this.getNeighboringWalls(this.grid);
@@ -85,14 +86,14 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
         }
     }
 
-    this.getNeighbors = function() {
+    this.getNeighbors = function () {
         if (!this.neighbors) {
             this.populateNeighbors();
         }
         return this.neighbors;
     }
 
-    this.getNeighboringWalls = function(grid) {
+    this.getNeighboringWalls = function (grid) {
 
         if (!this.neighboringWalls) {
             this.populateNeighbors();
@@ -103,10 +104,10 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
 
     //maybe should be static properties?
     var LURDMoves = [
-        [-1, 0],
-        [0, -1],
-        [1, 0],
-        [0, 1]
+        [-1, 0], // west
+        [0, -1], // north
+        [1, 0],  // east
+        [0, 1]   // south
     ];
     var DiagonalMoves = [
         [-1, -1],
@@ -124,7 +125,7 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     ];
 
     //return node or null if request is out of bounds
-    this.getNode = function(i, j) {
+    this.getNode = function (i, j) {
         if (i < 0 || i >= this.grid.length ||
             j < 0 || j >= this.grid[0].length) {
             return null;
@@ -133,21 +134,66 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
     }
 
     //populate neighbor move and neighbor wall arrays
-    this.populateNeighbors = function() {
-        this.neighbors = [];
-        this.neighboringWalls = [];
+    this.populateNeighbors = function () {
 
-        //Add Left/Up/Right/Down Moves
-        for (var i = 0; i < 4; i++) {
-            var node = this.getNode(this.i + LURDMoves[i][0], this.j + LURDMoves[i][1]);
-            if (node != null) {
-                if (!node.wall) {
-                    this.neighbors.push(node);
+        var self = this;
+
+        handleNode = function (n) {
+            if (n != null) {
+                if (!n.wall) {
+                    self.neighbors.push(n);
                 } else {
-                    this.neighboringWalls.push(node);
+                    self.neighboringWalls.push(n);
                 }
             }
         }
+
+        this.neighbors = [];
+        this.neighboringWalls = [];
+
+        // systematically check each of the allowed directions for the cell
+        var thisNode = this.getNode(this.i, this.j);
+        var allowedDirections = thisNode.allowedDirections || [];
+
+        // North
+        if (allowedDirections.includes("N") ||
+            allowedDirections.includes("A")) {
+            var node = this.getNode(this.i, this.j - 1);
+            handleNode(node);
+        }
+
+        // East
+        if (allowedDirections.includes("E") ||
+            allowedDirections.includes("A")) {
+            var node = this.getNode(this.i + 1, this.j);
+            handleNode(node);
+        }
+
+        // South      
+        if (allowedDirections.includes("S") ||
+            allowedDirections.includes("A")) {
+            var node = this.getNode(this.i, this.j + 1);
+            handleNode(node);
+        }
+
+        // West
+        if (allowedDirections.includes("W") ||
+            allowedDirections.includes("A")) {
+            var node = this.getNode(this.i - 1, this.j);
+            handleNode(node);
+        }
+
+        //Add Left/Up/Right/Down Moves
+        // for (var i = 0; i < 4; i++) {
+        //     var node = this.getNode(this.i + LURDMoves[i][0], this.j + LURDMoves[i][1]);
+        //     if (node != null) {
+        //         if (!node.wall) {
+        //             this.neighbors.push(node);
+        //         } else {
+        //             this.neighboringWalls.push(node);
+        //         }
+        //     }
+        // }
 
         //Add Diagonals
 
@@ -166,16 +212,16 @@ function Spot(i, j, x, y, width, height, isWall, grid) {
                         //no need to protect against OOB as diagonal move
                         //check ensures that blocker refs must be valid
                         var blocker1 = this.grid[this.i + LURDMoves[border1][0]]
-                                                [this.j + LURDMoves[border1][1]];
+                        [this.j + LURDMoves[border1][1]];
                         var blocker2 = this.grid[this.i + LURDMoves[border2][0]]
-                                                [this.j + LURDMoves[border2][1]];
+                        [this.j + LURDMoves[border2][1]];
 
 
                         if (!blocker1.wall || !blocker2.wall) {
                             //one or both are open so we can move past
                             this.neighbors.push(node);
                         }
-                    }else {
+                    } else {
                         this.neighbors.push(node);
                     }
                 }

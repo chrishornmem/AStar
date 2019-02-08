@@ -173,7 +173,7 @@ var runPauseButton;
 var trains;
 var initPaths = [];
 var i = 0;
-const numTrains = 20;
+const numTrains = 10;
 var start = false;
 
 function initaliseSearchExample(rows, cols) {
@@ -432,7 +432,7 @@ function calcPath(endNode) {
             reject("temp undefined");
             return;
         } 
-        while (temp.previous && path.length < 1000) {
+        while (temp.previous) {
             path.push(temp.previous);
             temp = temp.previous;
           //  console.log("temp");
@@ -440,14 +440,9 @@ function calcPath(endNode) {
 
         }
         recordTime("Calc Path");
-        if(path.length >= 1000) {
-            reject(path);
-            console.log(path)
-        } else {
-            resolve(path);
+        path.reverse();
 
-        }
-
+        resolve(path);
 
         //return path
     });
